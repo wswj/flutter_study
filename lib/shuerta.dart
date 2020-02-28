@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_myf/shuertaProvider.dart';
 import 'package:provider/provider.dart';
 
-//void main() => runApp(MyApp());
+void main() => runApp(MyApp());
 
 // class MyApp extends StatelessWidget {
 //   const MyApp({Key key}) : super(key: key);
@@ -178,6 +178,7 @@ class _ShuterCellState extends State<ShuterCell> with TickerProviderStateMixin{
  
   @override
   Widget build(BuildContext context) {
+    double screen_width=MediaQuery.of(context).size.width;
     var provider = Provider.of<ShuerterProvider>(context);
     int count=provider.count;
     //print("count值为${provider.count}");
@@ -311,6 +312,7 @@ class _CountTimerState extends State<CountTimer> {
               ),
             )),
             Container(
+              //width: 360,
                 child: Flexible(
               flex: 2,
               child: MaterialButton(
@@ -327,6 +329,11 @@ class _CountTimerState extends State<CountTimer> {
                 ),
               ),
             )),
+            Container(
+              width:360,
+              decoration:BoxDecoration(color:Colors.red),
+              height: 10,
+            )
           ],
         ));
   }

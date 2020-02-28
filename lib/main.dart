@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_myf/pages/Recomment.dart';
+import 'package:flutter_myf/providers/RecommendProvider.dart';
 import 'package:marquee/marquee.dart';
+import 'package:provider/provider.dart';
 
 void main(){
   runApp(MyApp());
@@ -12,6 +15,10 @@ void main(){
 
 }
 
+
+
+          
+
 class MyApp extends StatelessWidget {
   const MyApp({Key key}) : super(key: key);
 
@@ -21,7 +28,8 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       //theme: ThemeData(),
       title: "抖音",
-      home: Scaffold(
+      home: MultiProvider(
+        child: Scaffold(
         body:SafeArea(
           top: true,
           child: Container(
@@ -35,7 +43,10 @@ class MyApp extends StatelessWidget {
             child: BtmBar(),
           )
         )
-      )
+      ),
+        providers: [ChangeNotifierProvider(
+            create: (context) => RecommandProvider())],
+          )
     );
   }
 }
@@ -46,6 +57,7 @@ class Home extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //获取屏幕的宽度=========需要注意的是该方法只有在MateriaApp的home属性中的组件中才有效
+    RecommandProvider provider = Provider.of<RecommandProvider>(context);
     double screen_width=MediaQuery.of(context).size.width;
     double screen_height=MediaQuery.of(context).size.height;
     return Container(
@@ -83,7 +95,7 @@ class Home extends StatelessWidget {
             right: 0,
             child: Container(
               // color:Colors.white,
-              child: getButtonList(),
+              child: getButtonList(context,provider),
             )
           ),
           Positioned(
@@ -184,11 +196,11 @@ class AddIcon extends StatelessWidget {
       width: 60,
       child: Stack(
         children:<Widget>[
-          Positioned(height:35,width:50,child:Container(decoration:BoxDecoration(color:Colors.cyan))),
-          Positioned(height:35,width:50,right:0,child:Container(decoration:BoxDecoration(color:Colors.redAccent))),
+          Positioned(height:35,width:50,child:Container(decoration:BoxDecoration(color:Colors.cyan,borderRadius: BorderRadius.circular(5)),)),
+          Positioned(height:35,width:50,right:0,child:Container(decoration:BoxDecoration(color:Colors.redAccent,borderRadius: BorderRadius.circular(5)))),
           Positioned(height:35,width:50,right:5,child:Container(decoration:BoxDecoration(
             color:Colors.white,
-            borderRadius: BorderRadius.circular(3)
+            borderRadius: BorderRadius.circular(5)
             ),
             child: Icon(Icons.add),
           )),
@@ -275,7 +287,7 @@ class _RotateAlbumState extends State<RotateAlbum> with TickerProviderStateMixin
   }
 }
 
-getButtonList(){
+getButtonList(BuildContext context,var provider){
   return Column(
     children: <Widget>[
       SizedBox(height:20),
@@ -298,7 +310,9 @@ getButtonList(){
       SizedBox(height:10),
       IconText(icon:Icon(Icons.favorite,size: 55,color: Colors.red,),text: "999W",),
       SizedBox(height:10),
-      IconText(icon:Icon(Icons.message,size: 55,color:Colors.white),text: "99",),
+      InkWell(onTap:(){showBottom(context,provider);},
+      child:IconText(icon:Icon(Icons.message,size: 55,color:Colors.white),text: "99",)
+      ),
       SizedBox(height:10),
       IconText(icon:Icon(Icons.reply,size: 55,color:Colors.white),text: "99",)
     ],
@@ -322,3 +336,24 @@ class IconText extends StatelessWidget {
     );
   }
 }
+
+showBottom(context,provider) {
+  //RecommandProvider provider = Provider.of<RecommandProvider>(context);
+  double height = MediaQuery.of(context).size.height;
+  provider.setScreenHeight(height);
+  provider.hideBottomBar();
+  showModalBottomSheet(
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadiusDirectional.circular(10)),
+      context: context,
+      builder: (_) {
+        return MultiProvider(
+        providers: [ChangeNotifierProvider(create:(context)=>RecommandProvider())],
+        child: Container(
+          height:600,
+          child: ReplyFullList(pCtx:context),
+        ),
+        );
+      });
+}
+
