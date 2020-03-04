@@ -24,7 +24,7 @@ List<MainInfo> followed = List<MainInfo>();
         userName: "马有发",
         videoPath: "lib/images/pingguo.jpeg",
         desc: "马友发做的一个有意思的模拟抖音的小App，用的Flutter哦~",
-        ifFaved: false);
+        ifFaved: true);
 
     reply = Reply(
         ifFaved: true,
