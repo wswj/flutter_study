@@ -1,6 +1,7 @@
 //import 'dart:js';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_myf/pages/FriendList.dart';
 import 'package:flutter_myf/providers/RecommendProvider.dart';
 import 'package:provider/provider.dart';
 
@@ -18,26 +19,23 @@ class ReplyFullList extends StatelessWidget {
     replies.add(reply);
     //添加scrollerController保证所有的滑动组件使用同一个controller以解决cloumn组件里的listview组件不会有滑动效果
     ScrollController controller=ScrollController();
-    return Container(
-      child: SingleChildScrollView(
-        controller: controller,
-        child:Column(
-      //让column组件拥有其应有的最小高度
-        mainAxisSize: MainAxisSize.min,
-        children:<Widget>[
-          Container(
-            height:80*rpx,
-            child:ListTile(
-              leading:Container(width:10),
-              trailing:IconButton(icon:Icon(Icons.close),onPressed:(){Navigator.pop(context);}),
-              title: Center(child:Text("共有3条评论"))
-            )
-          ),
-          genReplyList(replies,controller),
-          
-        ]
+    return Scaffold(
+      appBar: PreferredSize(child: AppBar(
+        leading: Container(),
+        elevation: 0,
+        backgroundColor: Colors.grey[50],
+        actions: <Widget>[
+          IconButton(icon: Icon(Icons.close,color:Colors.black), onPressed: (){Navigator.pop(context);})
+        ],
+        title: Text("10条评论",style: TextStyle(color:Colors.grey[700],fontSize: 25*rpx),),
+        
+      ), preferredSize: Size.fromHeight(80*rpx)),
+      bottomNavigationBar: SafeArea(child: BottomReplyBar(pctx: pCtx)),
+      body: SingleChildScrollView(
+        controller:controller,
+        child:Container(child: genReplyList(replies, controller),)
       ),
-      ),
+
     );
   }
 }
@@ -134,4 +132,42 @@ genAfterReplyList(List<Reply> list,ScrollController controller){
     itemBuilder:(context,index){
     return AfterReplyList(afterReply:list[index],controller:controller);
     } );
+}
+
+class BottomReplyBar extends StatelessWidget {
+  const BottomReplyBar({Key key,this.pctx}) : super(key: key);
+  final BuildContext pctx;
+  @override
+  Widget build(BuildContext context) {
+    TextEditingController _controller=TextEditingController();
+    double toBottom=MediaQuery.of(context).viewInsets.bottom;
+    double rpx=MediaQuery.of(context).size.width/750;
+
+    return Container(
+      padding: EdgeInsets.only(bottom:toBottom),
+      decoration: BoxDecoration(border:Border(top:BorderSide(color:Colors.grey[200],width:1))),
+      child: Row(
+        children:<Widget>[
+          Expanded(
+            child:Container(
+              padding:EdgeInsets.only(left:30*rpx),
+              child: TextField(controller:_controller,decoration:InputDecoration(hintText: "留下你的精彩评论",border:InputBorder.none)),
+            )
+          ),
+          IconButton(icon: Icon(Icons.email,color:Colors.grey[500],size: 50*rpx,), onPressed: (){showAtFriendPage(context);}),
+          IconButton(icon: Icon(Icons.face,size: 50*rpx,), onPressed: (){}),
+          SizedBox(width:20*rpx)
+        ]
+      ) ,
+    );
+  }
+}
+
+showAtFriendPage(BuildContext context){
+  Navigator.of(context).push(new MaterialPageRoute(
+    builder: (BuildContext context){
+    return AtFriendPage();
+  },
+  fullscreenDialog: true
+  ));
 }
